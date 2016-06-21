@@ -1,0 +1,11 @@
+1       h,k,l; -h,-k,-l
+2/m     h,k,l; -h,k,-l ; -h,-k,-l ; h,-k,l
+mmm     h,k,l; -h,k,l ; h,-k,l ; h,k,-l ; -h,-k,l ; -h,k,-l ; h,-k,-l ; -h,-k,-l
+4/m     h,k,l; -k,h,l ; -h,-k,l ; k,-h,l ; -h,-k,-l ; k,-h,-l ; h,k,-l ; -k,h,-l
+4/mmm   h,k,l; -k,h,l ; -h,-k,l ; k,-h,l ; -h,-k,-l ; k,-h,-l ; h,k,-l ; -k,h,-l ; k,h,l ; -h,k,l ; -k,-h,l ; h,-k,l ; -k,-h,-l ; h,-k,-l ; k,h,-l ; -h,k,-l
+6/m     h,k,l; -k,h+k,l ; -h-k,h,l ; -h,-k,l ; k,-h-k,l ; h+k,-h,l ; h,k,-l ; -k,h+k,-l ; -h-k,h,-l ; -h,-k,-l ; k,-h-k,-l ; h+k,-h,-l
+6/mmm   h,k,l; -k,h+k,l ; -h-k,h,l ; -h,-k,l ; k,-h-k,l ; h+k,-h,l ; h,k,-l ; -k,h+k,-l ; -h-k,h,-l ; -h,-k,-l ; k,-h-k,-l ; h+k,-h,-l ; k,h,l ; -h,h+k,l ; -h-k,k,l ; -k,-h,l ; h,-h-k,l ; h+k,-h,l ; k,h,-l ; -h,h+k,-l ; -h-k,k,-l ; -k,-h,-l ; h,-h-k,-l ; h+k,-h,-l
+3       h,k,l; h+k,-h,-l ; k,-h-k,l ; -h,-k,-l ; -h-k,h,l ; -k,h+k,-l
+3m      h,k,l; h+k,-h,-l ; k,-h-k,l ; -h,-k,-l ; -h-k,h,l ; -k,h+k,-l ; k,h,l ; h+k,-k,-l ; h,-h-k,l ; -k,-h,-l ; -h-k,k,l ; -h,h+k,-l
+m3      h,k,l; -h,-k,l ; -h,k,-l ; h,-k,-l ; l,h,k ; l,-h,-k ; -l,-h,k ; -l,h,-k ; k,l,h ; -k,l,-h ; k,-l,-h ; -k,-l,h ; -h,-k,-l ; h,k,-l ; h,-k,l ; -h,k,l ; -l,-h,-k ; -l,h,k ; l,h,-k ; l,-h,k ; -k,-l,-h ; k,-l,h ; -k,l,h ; k,l,-h
+m3m     h,k,l; -h,-k,l ; -h,k,-l ; h,-k,-l ; l,h,k ; l,-h,-k ; -l,-h,k ; -l,h,-k ; k,l,h ; -k,l,-h ; k,-l,-h ; -k,-l,h ; k,h,-l ; -k,-h,-l ; k,-h,l ; -k,h,l ; h,l,-k ; -h,l,k ; -h,-l,-k ; h,-l,k ; l,k,-h ; l,-k,h ; -l,k,h ; -l,-k,-h ; -h,-k,-l ; h,k,-l ; h,-k,l ; -h,k,l ; -l,-h,-k ; -l,h,k ; l,h,-k ; l,-h,k ; -k,-l,-h ; k,-l,h ; -k,l,h ; k,l,-h ; -k,-h,l ; k,h,l ; -k,h,-l ; k,-h,-l ; -h,-l,k ; h,-l,-k ; h,l,k ; -h,l,-k ; -l,-k,h ; -l,k,-h ; l,-k,-h ; l,k,h
