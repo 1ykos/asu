@@ -27,7 +27,17 @@ namespace SYMMETRY{
   static const size_t bits_per_miller=numeric_limits<size_t>::digits/3;    
   static const double deg2rad = M_PI/180.0;
   static const double rad2deg = 180.0/M_PI;
-  
+ 
+  /* This function f(h,k,l) maps the three values h,k,l to an uint64.
+   * This 64 bit value is not only used to as index to a hash map
+   * but also to define an ordering close to the one a human would choose.
+   * This ordering is, in a nutshell:
+   * prefer low indices and
+   * prefer positive numbers.
+   * This is also the reason for this very complicated hashing function.
+   * If the ordering is not important it could be replaced by
+   * concatenating the 16bit integer representations of the indices.
+   */
   const inline size_t hash(const MillerIndex& a){
     uint64_t i=0,j=0,k=0;
     const uint64_t hc = universal_encode_uint64(zigzag_encode(-a[0]),i);
@@ -36,6 +46,9 @@ namespace SYMMETRY{
     return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(i+1))^(lc>>(i+j+1)))>>(64-i-j-k-1); 
   }
 
+  /* This is the reverse hashing function, see hash(const MillerIndex&)
+   * for a more detailed description.
+   */
   const inline array<int,3> hash(const size_t &h){
     uint64_t i=0,j=0;
     const uint64_t lz = __builtin_clzll(h)+1;
@@ -45,16 +58,20 @@ namespace SYMMETRY{
              -zigzag_decode(uint32_t(universal_decode_uint64(h<<(lz+i+j))))
            }};
   }
-
+  /* This function uses the hash define an ordering and choose
+   * the one which compares lowest.
+   */
   bool isred(const MillerIndex &a, const MillerIndex &b){
     return hash(a)<hash(b);
-  } 
+  }
+  /* simply multiplication of matrix and vector
+   */
   inline Vector3D operator*(const ReciprocalCell& r,const MillerIndex& a){ 
     return {{r[0][0]*a[0]+r[0][1]*a[1]+r[0][2]*a[2],
              r[1][0]*a[0]+r[1][1]*a[1]+r[1][2]*a[2],
              r[2][0]*a[0]+r[2][1]*a[1]+r[2][2]*a[2]}};
   }
-/* this is probably wrong ... 
+/* this is probably wrong ... thats why it is commented out
   inline Vector3D operator*(const ReciprocalCell& r,const MillerIndex& a){
     return {{r[0][0]*a[0]+r[0][1]*a[0]+r[0][2]*a[0],
              r[0][0]*a[1]+r[0][1]*a[1]+r[0][2]*a[1],
@@ -65,7 +82,9 @@ namespace SYMMETRY{
   inline double norm_squared(const Vector3D& v){
     return v[0]*v[0]+v[1]*v[1]+v[2]*v[2];
   }
-
+  /* Test all symmetry related indices and choose the one whose
+   * hash value compares lowest.
+   */
   inline MillerIndex asu(const MillerIndex &v, size_t s, bool friedel){ 
     array<int,3> a=v; // implicit identity
     for (size_t i=nop[s-1]; i!=nop[s]; ++i){
@@ -89,7 +108,10 @@ namespace SYMMETRY{
   inline size_t asu_hashed(const array<int,3> &v, size_t s, bool friedel){
     return hash(asu(v,s,friedel));
   }
-  
+
+  /* calculate the resolution of the observed peak with given miller index
+   * and given reciprocal cell
+   */
   const inline double res(const ReciprocalCell &r,
                           const MillerIndex &a){
     Vector3D G = r*a;
@@ -110,7 +132,10 @@ namespace SYMMETRY{
   }
   */
   
-  // ewald offset in radians
+  /* calculate the offset of the ewalds sphere in radians
+   * this is basically how well is braggs law fulfilled
+   * using the reciprocal cell and the miller index
+   */
   const void inline res_ewald(const ReciprocalCell& r,
                               const MillerIndex& a,
                               const double l,
@@ -123,7 +148,10 @@ namespace SYMMETRY{
     d = 1.0/ng;
     o = asin(G[2]/ng)+asin(ng*l/2);
   }
-  
+
+  /* calculate the resolution of the observed reflection
+   * given its miller index and the cell parameters
+   */
   const inline double res(const array<int,3> &r,
                           const double &a,
                           const double &b,
@@ -162,6 +190,8 @@ namespace SYMMETRY{
     return sqrt(nominator/denominator);
   }
   
+  /* convert the cell parameters to a matrix representation of the unit cell
+   */
   const inline DirectCell get_cell(
     const double &a,
     const double &b,
@@ -186,6 +216,9 @@ namespace SYMMETRY{
   // m[0][0] m[0][1] m[0][2]
   // m[1][0] m[1][1] m[1][2]
   // m[2][0] m[2][1] m[2][2]
+
+  /* calculate matrix inverse
+   */
   const inline void inverse(Matrix3D &m){
     const double d = 1.0/(
        m[0][0]*m[1][1]*m[2][2]
@@ -211,7 +244,10 @@ namespace SYMMETRY{
       }},  // m[1][0..2]
     }};
   }
-  
+
+  /* calculate reciprocal unit cell representation by first getting
+   * the direct cell representation and then inverting it
+   */
   const inline ReciprocalCell get_reciprocal_cell(
     const double &a,
     const double &b,
@@ -235,9 +271,13 @@ namespace SYMMETRY{
 }
 
 namespace std {
+  /* operator for easier input of miller index
+   */
   inline istream& operator>>(istream& stream, SYMMETRY::MillerIndex& hkl){
     return stream >> hkl[0] >> hkl[1] >> hkl[2] ;
   }
+  /* operator for easier output of a miller index
+   */
   inline ostream& operator<<(ostream& stream, const SYMMETRY::MillerIndex& hkl){
     stream << setw(7) << hkl[0] << " " << setw(7) << hkl[1] << " " << setw(7) << hkl[2];
     return stream;
@@ -249,12 +289,16 @@ namespace std {
                   >> matrix[2][0] >> matrix[2][1] >> matrix[2][2];
   }
   */
-  // astar[0] astar[1] astar[2] bstar[0] bstar[1] bstar[2] cstar[0] cstar[1] cstar[2] 
+  /* operator for reading a reciprocal cell from textual input in the order:
+   * astar[0] astar[1] astar[2] bstar[0] bstar[1] bstar[2] cstar[0] cstar[1] cstar[2]
+   */
   inline istream& operator>>(istream& stream, SYMMETRY::Matrix3D& matrix){
     return stream >> matrix[0][0] >> matrix[1][0] >> matrix[2][0]
                   >> matrix[0][1] >> matrix[1][1] >> matrix[2][1]
                   >> matrix[0][2] >> matrix[1][2] >> matrix[2][2];
   }
+  /* operator for output of a reciprocal cell
+   */
   inline ostream& operator<<(ostream& stream, SYMMETRY::Matrix3D& matrix){
     return stream << setw(12) << matrix[0][0] << " "
                   << setw(12) << matrix[0][1] << " "
@@ -266,6 +310,9 @@ namespace std {
                   << setw(12) << matrix[2][1] << " "
                   << setw(12) << matrix[2][2];
   }
+  /* define hash<MillerIndex> for easier use of a MillerIndex as index
+   * for std stl container classes like unordered_map and unordered_set
+   */
   template<> class hash<SYMMETRY::MillerIndex> {
     public:
       size_t operator()(const SYMMETRY::MillerIndex &hkl) const 
