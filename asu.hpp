@@ -7,7 +7,9 @@
 #include <iomanip>
 
 #include "symops.hpp"
+#ifndef WMATH_H
 #include "wmath.hpp"
+#endif //WMATH_H
 
 using std::array;
 using std::numeric_limits;
