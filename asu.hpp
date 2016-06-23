@@ -30,17 +30,16 @@ namespace SYMMETRY{
   static const double deg2rad = M_PI/180.0;
   static const double rad2deg = 180.0/M_PI;
  
+
   /* This function f(h,k,l) maps the three values h,k,l to an uint64.
-   * This 64 bit value is not only used to as index to a hash map
-   * but also to define an ordering close to the one a human would choose.
-   * This ordering is, in a nutshell:
+   * This 64 bit value is used to define an ordering close to the one
+   * a human would choose. This ordering is, in a nutshell:
    * prefer low indices and
    * prefer positive numbers.
-   * This is also the reason for this very complicated hashing function.
-   * If the ordering is not important it could be replaced by
-   * concatenating the 16bit integer representations of the indices.
+   * It can also be used to encode the millerindex for storage or
+   * somewhat lousy compression
    */
-  const inline size_t hash(const MillerIndex& a){
+  const inline size_t encode(const MillerIndex& a){
     uint64_t i=0,j=0,k=0;
     const uint64_t hc = universal_encode_uint64(zigzag_encode(-a[0]),i);
     const uint64_t kc = universal_encode_uint64(zigzag_encode(-a[1]),j);
@@ -51,7 +50,7 @@ namespace SYMMETRY{
   /* This is the reverse hashing function, see hash(const MillerIndex&)
    * for a more detailed description.
    */
-  const inline array<int,3> hash(const size_t &h){
+  const inline array<int,3> decode(const size_t &h){
     uint64_t i=0,j=0;
     const uint64_t lz = __builtin_clzll(h)+1;
     return {{
@@ -64,7 +63,7 @@ namespace SYMMETRY{
    * the one which compares lowest.
    */
   bool isred(const MillerIndex &a, const MillerIndex &b){
-    return hash(a)<hash(b);
+    return encode(a)<encode(b);
   }
   /* simply multiplication of matrix and vector
    */
@@ -319,7 +318,12 @@ namespace std {
     public:
       size_t operator()(const SYMMETRY::MillerIndex &hkl) const 
       {
-        return SYMMETRY::hash(hkl);
+        const int8_t h = a[0];
+        const int8_t k = a[1];
+        const int8_t l = a[2];
+        return ((reinterpret_cast<size_t>(h))<<16)
+              ^((reinterpret_cast<size_t>(k))<<8)
+              ^((reinterpret_cast<size_t>(l)));
       }
   };
 }
