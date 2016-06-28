@@ -321,9 +321,9 @@ namespace std {
       {
         using wmath::zigzag_encode;
         using SYMMETRY::bits_per_miller;
-        return = (zigzag_encode(hkl[0])<<bits_per_miller*2)
-                ^(zigzag_encode(hkl[1])<<bits_per_miller)
-                ^(zigzag_encode(hkl[2]));
+        return   (size_t(zigzag_encode(hkl[0]))<<bits_per_miller*2)
+                ^(size_t(zigzag_encode(hkl[1]))<<bits_per_miller)
+                ^(size_t(zigzag_encode(hkl[2])));
       }
   };
 }
