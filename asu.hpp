@@ -107,7 +107,7 @@ namespace SYMMETRY{
   }
 
   inline size_t asu_hashed(const array<int,3> &v, size_t s, bool friedel){
-    return hash(asu(v,s,friedel));
+    return encode(asu(v,s,friedel));
   }
 
   /* calculate the resolution of the observed peak with given miller index
