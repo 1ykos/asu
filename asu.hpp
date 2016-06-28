@@ -30,18 +30,6 @@ namespace SYMMETRY{
   static const double deg2rad = M_PI/180.0;
   static const double rad2deg = 180.0/M_PI;
  
-
-  template<size_t log2bits> struct maxmillerint{typedef int32_t type;};
-  template<0> struct maxmillerint{typedef bool type;};
-  template<1> struct maxmillerint{typedef bool type;};
-  template<2> struct maxmillerint{typedef bool type;};
-  template<3> struct maxmillerint{typedef bool type;};
-  template<4> struct maxmillerint{typedef bool type;};
-  template<5> struct maxmillerint{typedef int8_t type;typedef uint8_t utype};
-  template<6> struct maxmillerint{typedef int16_t type;typedef uint16_t utype};
-  
-  
-
   /* This function f(h,k,l) maps the three values h,k,l to an uint64.
    * This 64 bit value is used to define an ordering close to the one
    * a human would choose. This ordering is, in a nutshell:
@@ -331,12 +319,11 @@ namespace std {
     public:
       size_t operator()(const SYMMETRY::MillerIndex &hkl) const 
       {
-        typedef SYMMETRY::maxmillerint<wmath::log2(numeric_limits<size_t>::digits)>::type  stype;
-        typedef SYMMETRY::maxmillerint<wmath::log2(numeric_limits<size_t>::digits)>::utype utype;
-        const size_t digits = numeric_limits<stype>::digits;
-        return = (reinterpret_cast<utype>(static_cast<stype>(hkl[0]))<<digits*2)
-                ^(reinterpret_cast<utype>(static_cast<stype>(hkl[1]))<<digits)
-                  reinterpret_cast<utype>(static_cast<stype>(hkl[2]));
+        using wmath::zigzag_encode;
+        using SYMMETRY::bits_per_miller;
+        return = (zigzag_encode(hkl[0])<<bits_per_miller*2)
+                ^(zigzag_encode(hkl[1])<<bits_per_miller)
+                ^(zigzag_encode(hkl[2]));
       }
   };
 }
