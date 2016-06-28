@@ -318,9 +318,9 @@ namespace std {
     public:
       size_t operator()(const SYMMETRY::MillerIndex &hkl) const 
       {
-        const int8_t h = a[0];
-        const int8_t k = a[1];
-        const int8_t l = a[2];
+        const int8_t h = hkl[0];
+        const int8_t k = hkl[1];
+        const int8_t l = hkl[2];
         return ((reinterpret_cast<size_t>(h))<<16)
               ^((reinterpret_cast<size_t>(k))<<8)
               ^((reinterpret_cast<size_t>(l)));
