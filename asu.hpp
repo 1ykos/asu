@@ -13,6 +13,8 @@
 
 using std::array;
 using std::numeric_limits;
+using std::cout;
+using std::endl;
 
 using wmath::universal_encode_uint64;
 using wmath::universal_decode_uint64;
@@ -58,6 +60,16 @@ namespace SYMMETRY{
              -zigzag_decode(uint32_t(universal_decode_uint64(h<<(lz+i+j))))
            }};
   }
+
+  const inline array<int,3> unsafe_unhash(const size_t &h){
+    const size_t size_t_digits = numeric_limits<size_t>::digits;
+    const size_t mask = ~size_t(0)>>(size_t_digits-bits_per_miller);
+    return {{
+             zigzag_decode(uint32_t(h>>bits_per_miller*2)),
+             zigzag_decode(uint32_t((h>>bits_per_miller)&mask)),
+             zigzag_decode(uint32_t(h&mask))
+             }};
+  }
   /* This function uses the hash define an ordering and choose
    * the one which compares lowest.
    */
@@ -71,6 +83,14 @@ namespace SYMMETRY{
              r[1][0]*a[0]+r[1][1]*a[1]+r[1][2]*a[2],
              r[2][0]*a[0]+r[2][1]*a[1]+r[2][2]*a[2]}};
   }
+  /* hopefully never used
+  inline Vector3D operator*(const MillerIndex& a,const ReciprocalCell& r){
+    return {{r[0][0]*a[0]+r[0][1]*a[0]+r[0][2]*a[0],
+             r[0][0]*a[1]+r[0][1]*a[1]+r[0][2]*a[1],
+             r[0][0]*a[2]+r[0][1]*a[2]+r[0][2]*a[2]
+             }};
+  }
+  */
 /* this is probably wrong ... thats why it is commented out
   inline Vector3D operator*(const ReciprocalCell& r,const MillerIndex& a){
     return {{r[0][0]*a[0]+r[0][1]*a[0]+r[0][2]*a[0],
@@ -90,16 +110,26 @@ namespace SYMMETRY{
     for (size_t i=nop[s-1]; i!=nop[s]; ++i){
       array<int,3> b =
       {{
-        a[0]*tab[i][0][0]+a[1]*tab[i][1][0]+a[2]*tab[i][2][0],
-        a[0]*tab[i][0][1]+a[1]*tab[i][1][1]+a[2]*tab[i][2][1],
-        a[0]*tab[i][0][2]+a[1]*tab[i][1][2]+a[2]*tab[i][2][2]
+        v[0]*tab[i][0][0]+v[1]*tab[i][1][0]+v[2]*tab[i][2][0],
+        v[0]*tab[i][0][1]+v[1]*tab[i][1][1]+v[2]*tab[i][2][1],
+        v[0]*tab[i][0][2]+v[1]*tab[i][1][2]+v[2]*tab[i][2][2]
       }};
-      if (isred(b,a)) a=b;
+      //cout << b[0] << " " << b[1] << " " << b[2] << " " << encode(b) << endl;
+      if (isred(b,a)){
+        //cout << encode(b) << " < " << encode(a) << endl;
+        a[0]=b[0];
+        a[1]=b[1];
+        a[2]=b[2];
+      }
       if (friedel){
-        b[0]=-b[0];
-        b[1]=-b[1];
-        b[2]=-b[2];
-        if (isred(b,a)) a=b;
+        b = {{-b[0],-b[1],-b[2]}};
+        //cout << b[0] << " " << b[1] << " " << b[2]  << " " << encode(b) << endl;
+        if (isred(b,a)){
+          //cout << encode(b) << " < " << encode(a) << endl;
+          a[0]=b[0];
+          a[1]=b[1];
+          a[2]=b[2];
+        }
       }
     }
     return a;
@@ -153,12 +183,12 @@ namespace SYMMETRY{
    * given its miller index and the cell parameters
    */
   const inline double res(const array<int,3> &r,
-                          const double &a,
-                          const double &b,
-                          const double &c,
-                          const double &alpha,
-                          const double &beta,
-                          const double &gamma
+                          const double a,
+                          const double b,
+                          const double c,
+                          const double alpha,
+                          const double beta,
+                          const double gamma
                       ){
     const int h = r[0];
     const int k = r[1];
@@ -193,20 +223,20 @@ namespace SYMMETRY{
   /* convert the cell parameters to a matrix representation of the unit cell
    */
   const inline DirectCell get_cell(
-    const double &a,
-    const double &b,
-    const double &c,
-    const double &alpha,
-    const double &beta,
-    const double &gamma
+    const double a,
+    const double b,
+    const double c,
+    const double alpha,
+    const double beta,
+    const double gamma
   ){
     array<array<double,3>,3> cell;
-    cell[0][0] = a*a;
-    cell[1][1] = b*b;
-    cell[2][2] = c*c;
-    cell[0][1] = a*b*cos(deg2rad*gamma);
-    cell[0][2] = a*c*cos(deg2rad*beta);
-    cell[1][2] = b*c*cos(deg2rad*alpha);
+    cell[0][0] = sqrt(a*a);
+    cell[1][1] = sqrt(b*b);
+    cell[2][2] = sqrt(c*c);
+    cell[0][1] = sqrt(a*b*cos(deg2rad*gamma));
+    cell[0][2] = sqrt(a*c*cos(deg2rad*beta));
+    cell[1][2] = sqrt(b*c*cos(deg2rad*alpha));
     cell[2][0] = cell[0][2];
     cell[1][0] = cell[0][1];
     cell[2][1] = cell[1][2];
@@ -249,12 +279,12 @@ namespace SYMMETRY{
    * the direct cell representation and then inverting it
    */
   const inline ReciprocalCell get_reciprocal_cell(
-    const double &a,
-    const double &b,
-    const double &c,
-    const double &alpha,
-    const double &beta,
-    const double &gamma
+    const double a,
+    const double b,
+    const double c,
+    const double alpha,
+    const double beta,
+    const double gamma
   ){
     DirectCell cell = get_cell(a,b,c,alpha,beta,gamma);
     inverse(cell);
@@ -324,6 +354,8 @@ namespace std {
         return   (size_t(zigzag_encode(hkl[0]))<<bits_per_miller*2)
                 ^(size_t(zigzag_encode(hkl[1]))<<bits_per_miller)
                 ^(size_t(zigzag_encode(hkl[2])));
+        //also possible:
+        //return wmath::rol(size_t(hkl[0]),bits_per_miller*2)^wmath::rol(size_t(hkl[1]),bits_per_miller)^size_t(hkl[2]);
       }
   };
 }
