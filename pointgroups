@@ -1,0 +1,37 @@
+#number,symbol,s,op(identity implicit)
+ 1  1        1          
+ 2  ̅1        2  -h,-k,-l
+ 3  2        3  -h, k,-l
+ 4  m        6   h,-k, l
+ 5  2/m     10  -h, k,-l;-h,-k,-l; h,-k, l 
+ 6  222     16  -h,-k, l; h,-k,-l;-h, k,-l 
+ 7  mm2     25  -h,-k, l;-h, k, l; h,-k, l 
+ 8  2/mmm   47  -h,-k, l; h,-k,-l;-h, k,-l;-h,-k,-l; h, k,-l;-h, k, l; h,-k, l 
+ 9  4       75  -k, h, l; k,-h, l;-h,-k, l;
+10  ̅4       81  -h,-k, l; k,-h,-l;-k, h, l; 
+11  4/m     83  -k, h, l;-h,-k, l; k,-h, l;-h,-k,-l; k,-h,-l; h, k,-l;-k, h,-l
+12  422     89  -k, h, l;-h,-k, l; h,-k,-l;-h, k,-l; k,-h, l; h, k,-l;-k,-h,-l
+13  4mm     99  -k, h, l;-h,-k, l; k,-h, l;-h, k, l; h,-k, l;-k,-h, l; k, h, l
+14  ̅42m    111   k,-h,-l;-h,-k, l;-k, h,-l; h,-k,-l;-k,-h, l;-h, k,-l; k, h, 
+15  ̅4m2    115  -k, h,-l;-h,-k, l;-k, h,-l;-h, k, l; k, h,-l; h,-k, l;-k,-h,-l
+16  4/mmm  123 
+17  3      143
+18  ̅3      147
+19  312    149
+20  321    150
+21  32     156
+22  ??     157
+23  ̅3m     162
+24  6      168
+26  ̅6      174
+27  6/m    175
+28  622    177
+29  6mm    183
+30  ̅6m2    187
+31  6/mmm  191
+32  23     195
+33  m̅3     200
+34  432    207
+35  ̅43m    215
+36  m̅3m    221
+
