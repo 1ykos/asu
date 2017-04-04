@@ -15,6 +15,7 @@ using std::array;
 using std::numeric_limits;
 using std::cout;
 using std::endl;
+using std::abs;
 
 using wmath::universal_encode_uint64;
 using wmath::universal_decode_uint64;
@@ -74,8 +75,81 @@ namespace SYMMETRY{
    * the one which compares lowest.
    */
   bool isred(const MillerIndex &a, const MillerIndex &b){
-    return encode(a)<encode(b);
+    if ((a[0] <0)&&(b[0]>=0)) return false;
+    if ((a[0]>=0)&&(b[0] <0)) return true;
+    if ((a[1] <0)&&(b[1]>=0)) return false;
+    if ((a[1]>=0)&&(b[1] <0)) return true;
+    if ((a[2] <0)&&(b[2]>=0)) return false;
+    if ((a[2]>=0)&&(b[2] <0)) return true;
+    if (abs(a[0])>abs(b[0]))  return false;
+    if (abs(a[0])<abs(b[0]))  return true;
+    if (abs(a[1])>abs(b[1]))  return false;
+    if (abs(a[1])<abs(b[1]))  return true;
+    if (abs(a[2])>abs(b[2]))  return false;
+    if (abs(a[2])<abs(b[2]))  return true;
+    return false;
   }
+  
+  bool constexpr isred(const int32_t  h, const int32_t  k, const int32_t  l,
+                       const int32_t _h, const int32_t _k, const int32_t _l
+      ){
+    if ((h <0)&&(_h>=0)) return false;
+    if ((h>=0)&&(_h <0)) return true;
+    if ((k <0)&&(_k>=0)) return false;
+    if ((k>=0)&&(_k <0)) return true;
+    if ((l <0)&&(_l>=0)) return false;
+    if ((l>=0)&&(_l <0)) return true;
+    if (abs(h)>abs(_h))  return false;
+    if (abs(h)<abs(_h))  return true;
+    if (abs(k)>abs(_k))  return false;
+    if (abs(k)<abs(_k))  return true;
+    if (abs(l)>abs(_l))  return false;
+    if (abs(l)<abs(_l))  return true;
+    return false;
+  }
+  
+  bool constexpr isred(const int32_t  h, const int32_t  k,
+                       const int32_t _h, const int32_t _k
+      ){
+    if ((h <0)&&(_h>=0)) return false;
+    if ((h>=0)&&(_h <0)) return true;
+    if ((k <0)&&(_k>=0)) return false;
+    if ((k>=0)&&(_k <0)) return true;
+    if (abs(h)>abs(_h))  return false;
+    if (abs(h)<abs(_h))  return true;
+    if (abs(k)>abs(_k))  return false;
+    if (abs(k)<abs(_k))  return true;
+    return false;
+  }
+  
+  /* calculate matrix inverse
+   */
+  const inline void inverse(Matrix3D &m){
+    const double d = 1.0/(
+       m[0][0]*m[1][1]*m[2][2]
+      +m[0][1]*m[1][2]*m[2][0]
+      +m[0][2]*m[1][0]*m[2][1]
+      -m[0][2]*m[1][1]*m[2][0]
+      -m[0][0]*m[1][2]*m[2][1]
+      -m[0][1]*m[1][0]*m[2][2]
+                         );
+    m=
+    {{
+      {{d*(m[1][1]*m[2][2]-m[1][2]*m[2][1]),
+        d*(m[1][0]*m[2][2]-m[1][2]*m[2][0]),
+        d*(m[1][0]*m[2][1]-m[1][1]*m[2][0])
+      }}, // m[0][0..2]
+      {{d*(m[0][1]*m[2][2]-m[0][2]*m[2][1]),
+        d*(m[0][0]*m[2][2]-m[0][2]*m[2][0]),
+        d*(m[0][0]*m[2][1]-m[0][1]*m[2][0])
+      }}, // m[1][0..2]
+      {{d*(m[0][1]*m[1][2]-m[0][2]*m[1][1]),
+        d*(m[0][0]*m[1][2]-m[0][2]*m[1][0]),
+        d*(m[0][0]*m[1][1]-m[0][1]*m[1][0])
+      }},  // m[1][0..2]
+    }};
+  }
+  
   /* simply multiplication of matrix and vector
    */
   inline Vector3D operator*(const ReciprocalCell& r,const MillerIndex& a){ 
@@ -105,17 +179,36 @@ namespace SYMMETRY{
   /* Test all symmetry related indices and choose the one whose
    * hash value compares lowest.
    */
+  char constexpr nice(const int i){
+    if (i==0) return 'o';
+    if (i==-1) return '-';
+    if (i==1) return '+';
+    return 'x';
+  }
   inline MillerIndex asu(const MillerIndex &v, size_t s, bool friedel){ 
+    //cout << endl;
     array<int,3> a=v; // implicit identity
     for (size_t i=nop[s-1]; i!=nop[s]; ++i){
+      /*
+      cout << nice(tab[i][0][0]) << " ";
+      cout << nice(tab[i][0][1]) << " ";
+      cout << nice(tab[i][0][2]) << endl;
+      cout << nice(tab[i][1][0]) << " ";
+      cout << nice(tab[i][1][1]) << " ";
+      cout << nice(tab[i][1][2]) << endl;
+      cout << nice(tab[i][2][0]) << " ";
+      cout << nice(tab[i][2][1]) << " ";
+      cout << nice(tab[i][2][2]) << endl;
+      */
       array<int,3> b =
       {{
         v[0]*tab[i][0][0]+v[1]*tab[i][1][0]+v[2]*tab[i][2][0],
         v[0]*tab[i][0][1]+v[1]*tab[i][1][1]+v[2]*tab[i][2][1],
         v[0]*tab[i][0][2]+v[1]*tab[i][1][2]+v[2]*tab[i][2][2]
       }};
-      //cout << b[0] << " " << b[1] << " " << b[2] << " " << encode(b) << endl;
+      //cout << b[0] << " " << b[1] << " " << b[2] << " " << endl;
       if (isred(b,a)){
+        //cout << "is reduced " << endl;
         //cout << encode(b) << " < " << encode(a) << endl;
         a[0]=b[0];
         a[1]=b[1];
@@ -123,8 +216,9 @@ namespace SYMMETRY{
       }
       if (friedel){
         b = {{-b[0],-b[1],-b[2]}};
-        //cout << b[0] << " " << b[1] << " " << b[2]  << " " << encode(b) << endl;
+        cout << b[0] << " " << b[1] << " " << b[2]  << " " << encode(b) << endl;
         if (isred(b,a)){
+          cout << "is reduced" << endl;
           //cout << encode(b) << " < " << encode(a) << endl;
           a[0]=b[0];
           a[1]=b[1];
@@ -146,6 +240,11 @@ namespace SYMMETRY{
                           const MillerIndex &a){
     Vector3D G = r*a;
     return 1.0/sqrt(norm_squared(G));
+  }
+
+  const inline double res(const ReciprocalCell &r,
+                          const size_t x){
+    return res(r,decode(x));
   }
 
   /* old ewald offset in strange units
@@ -176,7 +275,7 @@ namespace SYMMETRY{
     const double sng = norm_squared(G);
     const double ng  = sqrt(sng);
     d = 1.0/ng;
-    o = asin(G[2]/ng)+asin(ng*l/2);
+    o = asin(G[2]*d)+asin(ng*l/2);
   }
 
   /* calculate the resolution of the observed reflection
@@ -219,6 +318,40 @@ namespace SYMMETRY{
       +2*h*k/(a*b)*(cos_alpha*cos_beta-cos_gamma);
     return sqrt(nominator/denominator);
   }
+
+  const inline void get_unit_cell_parameters(
+      const ReciprocalCell& rcell, 
+      double& a,
+      double& b,
+      double& c,
+      double& alpha,
+      double& beta,
+      double& gamma
+      ){
+    DirectCell cell = rcell;
+    inverse(cell);
+    a = sqrt(cell[0][0]*cell[0][0]
+            +cell[1][0]*cell[1][0]
+            +cell[2][0]*cell[2][0]);
+    b = sqrt(cell[0][1]*cell[0][1]
+            +cell[1][1]*cell[1][1]
+            +cell[2][1]*cell[2][1]);
+    c = sqrt(cell[0][2]*cell[0][2]
+            +cell[1][2]*cell[1][2]
+            +cell[2][2]*cell[2][2]);
+    const double pab =  cell[0][0]*cell[0][1]
+                       +cell[1][0]*cell[1][1]
+                       +cell[2][0]*cell[2][1];
+    const double pac =  cell[0][0]*cell[0][2]
+                       +cell[1][0]*cell[1][2]
+                       +cell[2][0]*cell[2][2];
+    const double pbc =  cell[0][1]*cell[0][2]
+                       +cell[1][1]*cell[1][2]
+                       +cell[2][1]*cell[2][2];
+    alpha = acos(pab/(a*b));
+    beta  = acos(pac/(a*c));
+    gamma = acos(pbc/(b*c));
+  }
   
   /* convert the cell parameters to a matrix representation of the unit cell
    */
@@ -246,34 +379,6 @@ namespace SYMMETRY{
   // m[0][0] m[0][1] m[0][2]
   // m[1][0] m[1][1] m[1][2]
   // m[2][0] m[2][1] m[2][2]
-
-  /* calculate matrix inverse
-   */
-  const inline void inverse(Matrix3D &m){
-    const double d = 1.0/(
-       m[0][0]*m[1][1]*m[2][2]
-      +m[0][1]*m[1][2]*m[2][0]
-      +m[0][2]*m[1][0]*m[2][1]
-      -m[0][2]*m[1][1]*m[2][0]
-      -m[0][0]*m[1][2]*m[2][1]
-      -m[0][1]*m[1][0]*m[2][2]
-                         );
-    m=
-    {{
-      {{d*(m[1][1]*m[2][2]-m[1][2]*m[2][1]),
-        d*(m[1][0]*m[2][2]-m[1][2]*m[2][0]),
-        d*(m[1][0]*m[2][1]-m[1][1]*m[2][0])
-      }}, // m[0][0..2]
-      {{d*(m[0][1]*m[2][2]-m[0][2]*m[2][1]),
-        d*(m[0][0]*m[2][2]-m[0][2]*m[2][0]),
-        d*(m[0][0]*m[2][1]-m[0][1]*m[2][0])
-      }}, // m[1][0..2]
-      {{d*(m[0][1]*m[1][2]-m[0][2]*m[1][1]),
-        d*(m[0][0]*m[1][2]-m[0][2]*m[1][0]),
-        d*(m[0][0]*m[1][1]-m[0][1]*m[1][0])
-      }},  // m[1][0..2]
-    }};
-  }
 
   /* calculate reciprocal unit cell representation by first getting
    * the direct cell representation and then inverting it

@@ -358,9 +358,9 @@ size_t constexpr get_laue_group(const size_t s){
 }
 
 // 111
-uint64_t constexpr encode2(const uint32_t _h,
-                           const uint32_t _k,
-                           const uint32_t _l){ 
+uint64_t constexpr encode(const uint32_t _h,
+                          const uint32_t _k,
+                          const uint32_t _l){ 
   uint64_t h = _h+1;
   uint64_t k = _k+1;
   uint64_t l = _l+1;
@@ -406,10 +406,10 @@ uint64_t constexpr encode2(const uint32_t _h,
   return r;//reorder log2(h) h log2(k)-log2(h) k log2(l)-log2(k) l
 }
 
-constexpr void decode2(const uint64_t x,
-                       uint32_t& h,
-                       uint32_t& k,
-                       uint32_t& l){
+constexpr void decode(const uint64_t x,
+                      uint32_t& h,
+                      uint32_t& k,
+                      uint32_t& l){
   const uint64_t lz = __builtin_clzll(x);
   uint64_t a=0;
   uint64_t r = x;
@@ -441,181 +441,119 @@ constexpr void decode2(const uint64_t x,
 
 // 000
 uint64_t constexpr encode(const int32_t h,const int32_t k,const int32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(zigzag_encode(-h)+1,a);
-  const uint64_t kc = universal_encode_uint64(zigzag_encode(-k)+1,b);
-  const uint64_t lc = universal_encode_uint64(zigzag_encode(-l)+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(zigzag_encode(-h),zigzag_encode(-k),zigzag_encode(-l));
 }
 // 001
 uint64_t constexpr encode(const int32_t h,const int32_t k,const uint32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(zigzag_encode(-h)+1,a);
-  const uint64_t kc = universal_encode_uint64(zigzag_encode(-k)+1,b);
-  const uint64_t lc = universal_encode_uint64(l+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(zigzag_encode(-h),zigzag_encode(-k),l);
 }
 // 010
 uint64_t constexpr encode(const int32_t h,const uint32_t k,const int32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(zigzag_encode(-h)+1,a);
-  const uint64_t kc = universal_encode_uint64(k+1,b);
-  const uint64_t lc = universal_encode_uint64(zigzag_encode(-l)+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(zigzag_encode(-h),k,zigzag_encode(-l));
 }
 // 011
 uint64_t constexpr encode(const int32_t h,const uint32_t k,const uint32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(zigzag_encode(-h)+1,a);
-  const uint64_t kc = universal_encode_uint64(k+1,b);
-  const uint64_t lc = universal_encode_uint64(l+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(zigzag_encode(-h),k,l);
 }
 // 100
 uint64_t constexpr encode(const uint32_t h,const int32_t k,const int32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(h+1,a);
-  const uint64_t kc = universal_encode_uint64(zigzag_encode(-k)+1,b);
-  const uint64_t lc = universal_encode_uint64(zigzag_encode(-l)+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(h,zigzag_encode(-k),zigzag_encode(-l));
 }
 // 101
 uint64_t constexpr encode(const uint32_t h,const int32_t k,const uint32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(h+1,a);
-  const uint64_t kc = universal_encode_uint64(zigzag_encode(-k)+1,b);
-  const uint64_t lc = universal_encode_uint64(l+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(h,zigzag_encode(-k),zigzag_encode(-l));
 }
 // 110
 uint64_t constexpr encode(const uint32_t h,const uint32_t k,const int32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(h+1,a);
-  const uint64_t kc = universal_encode_uint64(k+1,b);
-  const uint64_t lc = universal_encode_uint64(zigzag_encode(-l)+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
-}
-
-// 111
-uint64_t constexpr encode(const uint32_t h,const uint32_t k,const uint32_t l){
-  uint64_t a=0,b=0,c=0;
-  // encode
-  const uint64_t hc = universal_encode_uint64(h+1,a);
-  const uint64_t kc = universal_encode_uint64(k+1,b);
-  const uint64_t lc = universal_encode_uint64(l+1,c);
-  // pack
-  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);
+  return encode(h,k,zigzag_encode(-l));
 }
 
 
 MillerIndex constexpr decode_sss(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t l = __builtin_clzll(x)+1;
-  return {{
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<l,i))-1),
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i),j))-1),
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i+j)))-1)
-  }};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{-zigzag_decode(h),-zigzag_decode(k),-zigzag_decode(l)}};
 }
 
 MillerIndex constexpr decode_uss(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t l = __builtin_clzll(x)+1;
-  return {{
-               static_cast< int32_t>(universal_decode_uint64(x<<l,i))-1,
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i),j))-1),
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i+j)))-1)
-  }};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{static_cast<int32_t>(h),-zigzag_decode(k),-zigzag_decode(l)}};
 }
 
 MillerIndex constexpr decode_sus(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t l = __builtin_clzll(x)+1;
-  return {{
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<l,i))-1),
-               static_cast< int32_t>(universal_decode_uint64(x<<(l+i),j))-1,
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i+j)))-1)
-  }};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{-zigzag_decode(h),static_cast<int32_t>(k),-zigzag_decode(l)}};
 }
 
 MillerIndex constexpr decode_uus(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t l = __builtin_clzll(x)+1;
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
   return {{
-               static_cast< int32_t>(universal_decode_uint64(x<<l,i))-1,
-               static_cast< int32_t>(universal_decode_uint64(x<<(l+i),j))-1,
--zigzag_decode(static_cast<uint32_t>(universal_decode_uint64(x<<(l+i+j)))-1)
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k),
+    -zigzag_decode(l)
   }};
 }
 
 MillerIndex constexpr decode_uds(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t lz = __builtin_clzll(x)+1;
-  const int32_t h = universal_decode_uint64(x<<lz,i)-1;
-  const int32_t k = h+universal_decode_uint64(x<<(lz+i),j)-1;
-  const int32_t l = -zigzag_decode(
-      static_cast<uint32_t>(universal_decode_uint64(x<<(lz+i+j)))-1);
-  return {{h,k,l}};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k+h),
+    -zigzag_decode(l)
+  }};
 }
 
 MillerIndex constexpr decode_uas(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t lz = __builtin_clzll(x)+1;
-  const int32_t h = universal_decode_uint64(x<<lz,i)-1;
-  const int32_t k = -h+universal_decode_uint64(x<<(lz+i),j)-1;
-  const int32_t l = -zigzag_decode(
-      static_cast<uint32_t>(universal_decode_uint64(x<<(lz+i+j)))-1);
-  return {{h,k,l}};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k)-static_cast<int32_t>(h),
+    -zigzag_decode(l)
+  }};
 }
 
 MillerIndex constexpr decode_udu(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t lz = __builtin_clzll(x)+1;
-  const int32_t h = universal_decode_uint64(x<<lz,i)-1;
-  const int32_t k = h+universal_decode_uint64(x<<(lz+i),j)-1;
-  const int32_t l = universal_decode_uint64(x<<(lz+i+j))-1;
-  return {{h,k,l}};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k+h),
+    static_cast<int32_t>(l)
+  }};
 }
 
 MillerIndex constexpr decode_uud(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t lz = __builtin_clzll(x)+1;
-  const int32_t h = universal_decode_uint64(x<<lz,i)-1;
-  const int32_t k = universal_decode_uint64(x<<(lz+i),j)-1;
-  const int32_t l = h+universal_decode_uint64(x<<(lz+i+j))-1;
-  return {{h,k,l}};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k),
+    static_cast<int32_t>(l+h),
+  }};
 }
 
 MillerIndex constexpr decode_udd(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t lz = __builtin_clzll(x)+1;
-  const int32_t h = universal_decode_uint64(x<<lz,i)-1;
-  const int32_t k = h+universal_decode_uint64(x<<(lz+i),j)-1;
-  const int32_t l = k+universal_decode_uint64(x<<(lz+i+j))-1;
-  return {{h,k,l}};
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
+  return {{
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k+h),
+    static_cast<int32_t>(l+k+h),
+  }};
 }
 
 MillerIndex constexpr decode_uuu(const uint64_t x){
-  uint64_t i=0,j=0;
-  const uint64_t l = __builtin_clzll(x)+1;
+  uint32_t h=0,k=0,l=0;
+  decode(x,h,k,l);
   return {{
-static_cast<int32_t>(universal_decode_uint64(x<<l,i))-1,
-static_cast<int32_t>(universal_decode_uint64(x<<(l+i),j))-1,
-static_cast<int32_t>(universal_decode_uint64(x<<(l+i+j)))-1
+    static_cast<int32_t>(h),
+    static_cast<int32_t>(k),
+    static_cast<int32_t>(l),
   }};
 }
 
@@ -835,7 +773,7 @@ uint64_t constexpr reduce_encode<10>(const MillerIndex& hkl){
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<10>(const uint64_t x){return decode_uas(x);}
+MillerIndex constexpr decode<10>(const uint64_t x){return decode_uus(x);}
 
 template<>
 constexpr void reduce<11>(int32_t& h,int32_t& k,int32_t& l){
@@ -964,13 +902,13 @@ constexpr void reduce<15>(int32_t& h,int32_t& k,int32_t& l){
 template<>
 uint64_t constexpr reduce_encode<15>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
-  reduce<14>(h,k,l);//k>=h
+  reduce<15>(h,k,l);//k>=h
   return encode(static_cast<uint32_t>(h),
                 static_cast<uint32_t>(k),
                 static_cast<uint32_t>(l));
 }
 template<>
-MillerIndex constexpr decode<15>(const uint64_t x){return decode_uds(x);}
+MillerIndex constexpr decode<15>(const uint64_t x){return decode_uuu(x);}
 
 //  121 -> 14
 //   + o o   o + o   - o o   o - o   + o o   o - o   - o o   o + o
@@ -994,7 +932,7 @@ constexpr void reduce<16>(int32_t& h,int32_t& k,int32_t& l){
 template<>
 uint64_t constexpr reduce_encode<16>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
-  reduce<15>(h,k,l);
+  reduce<16>(h,k,l);
   return encode(static_cast<uint32_t>(h),
                 static_cast<uint32_t>(k-h),//k>=h
                 static_cast<uint32_t>(l));
@@ -1038,7 +976,7 @@ constexpr void reduce<17>(int32_t& h,int32_t& k,int32_t& l){
 template<>
 uint64_t constexpr reduce_encode<17>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
-  reduce<16>(h,k,l);
+  reduce<17>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
@@ -1050,7 +988,7 @@ constexpr void reduce<18>(int32_t& h,int32_t& k,int32_t& l){
 //   o + o   + - o   - o o   o - o   - + o   + o o
 //   o o +   o o +   o o +   o o -   o o -   o o -
 //
-// definiton: h>=0, k>=0, l>=0
+// definiton: h>=0, k>=0
 // 0  h,k =  h    k     l
 // 1  h,k = -h   -k    -l
 // 2  h,k = -h-k  h     l
@@ -1112,12 +1050,10 @@ template<>
 uint64_t constexpr reduce_encode<18>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<18>(h,k,l);
-  return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k),
-                static_cast<uint32_t>(l));
+  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<18>(const uint64_t x){return decode_uuu(x);}
+MillerIndex constexpr decode<18>(const uint64_t x){return decode_uus(x);}
 
 template<>
 constexpr void reduce<19>(int32_t& h,int32_t& k,int32_t& l){
@@ -1171,11 +1107,10 @@ uint64_t constexpr reduce_encode<19>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<19>(h,k,l);
   return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k),
-                static_cast<uint32_t>(l));
+                static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<19>(const uint64_t x){return decode_uuu(x);}
+MillerIndex constexpr decode<19>(const uint64_t x){return decode_uus(x);}
 
 template<>
 constexpr void reduce<20>(int32_t& h,int32_t& k,int32_t& l){
@@ -1227,10 +1162,10 @@ template<>
 uint64_t constexpr reduce_encode<20>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<20>(h,k,l);
-  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
+  return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<20>(const uint64_t x){return decode_uus(x);}
+MillerIndex constexpr decode<20>(const uint64_t x){return decode_uss(x);}
 
 template<>
 constexpr void reduce<21>(int32_t& h,int32_t& k,int32_t& l){
@@ -1308,10 +1243,10 @@ template<>
 uint64_t constexpr reduce_encode<22>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<22>(h,k,l);
-  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(h-k),l);
+  return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<22>(const uint64_t x){return decode_uds(x);}
+MillerIndex constexpr decode<22>(const uint64_t x){return decode_uss(x);}
 // 158
 //   + o o   o - o   - + o   o - o   + o o   - + o
 //   o + o   + - o   - o o   - o o   + - o   o + o
@@ -1336,10 +1271,10 @@ uint64_t constexpr reduce_encode<23>(const MillerIndex& hkl){
   reduce<23>(h,k,l);
   return encode(static_cast<uint32_t>(h),
                 static_cast<uint32_t>(k-h),
-                static_cast<uint32_t>(l));
+                l);
 };
 template<>
-MillerIndex constexpr decode<23>(const uint64_t x){return decode_udu(x);}
+MillerIndex constexpr decode<23>(const uint64_t x){return decode_uds(x);}
 
 template<>
 constexpr void reduce<24>(int32_t& h,int32_t& k,int32_t& l){
@@ -1369,10 +1304,12 @@ template<>
 uint64_t constexpr reduce_encode<24>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<24>(h,k,l);
-  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
+  return encode(static_cast<uint32_t>(h),
+      static_cast<uint32_t>(k),
+      static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<24>(const uint64_t x){return decode_uds(x);}
+MillerIndex constexpr decode<24>(const uint64_t x){return decode_uuu(x);}
 
 template<>
 constexpr void reduce<25>(int32_t& h,int32_t& k,int32_t& l){
@@ -1412,10 +1349,10 @@ template<>
 uint64_t constexpr reduce_encode<25>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<25>(h,k,l);
-  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
+  return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<25>(const uint64_t x){return decode_uds(x);}
+MillerIndex constexpr decode<25>(const uint64_t x){return decode_uus(x);}
 
 template<>
 constexpr void reduce<26>(int32_t& h,int32_t& k,int32_t& l){
@@ -1443,12 +1380,10 @@ template<>
 uint64_t constexpr reduce_encode<26>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<26>(h,k,l);
-  return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k),
-                static_cast<uint32_t>(l));
+  return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<26>(const uint64_t x){return decode_uuu(x);}
+MillerIndex constexpr decode<26>(const uint64_t x){return decode_uss(x);}
 
 
 template<>
@@ -1473,11 +1408,11 @@ uint64_t constexpr reduce_encode<27>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<27>(h,k,l);
   return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k-h),
+                static_cast<uint32_t>(k),
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<27>(const uint64_t x){return decode_udu(x);}
+MillerIndex constexpr decode<27>(const uint64_t x){return decode_uuu(x);}
 
 template<>
 constexpr void reduce<28>(int32_t& h,int32_t& k,int32_t& l){
@@ -1503,13 +1438,13 @@ constexpr void reduce<28>(int32_t& h,int32_t& k,int32_t& l){
 template<>
 uint64_t constexpr reduce_encode<28>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
-  reduce<27>(h,k,l);
+  reduce<28>(h,k,l);
   return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k-h),
+                static_cast<uint32_t>(k),
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<28>(const uint64_t x){return decode_udu(x);}
+MillerIndex constexpr decode<28>(const uint64_t x){return decode_uuu(x);}
 
 template<>
 constexpr void reduce<29>(int32_t& h,int32_t& k,int32_t& l){
@@ -1600,12 +1535,10 @@ template<>
 uint64_t constexpr reduce_encode<31>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<31>(h,k,l);
-  return encode(static_cast<uint32_t>(h),
-                static_cast<uint32_t>(k),
-                static_cast<uint32_t>(l));
+  return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<31>(const uint64_t x){return decode_uuu(x);}
+MillerIndex constexpr decode<31>(const uint64_t x){return decode_uss(x);}
 
 template<>
 constexpr void reduce<32>(int32_t& h,int32_t& k,int32_t& l){
