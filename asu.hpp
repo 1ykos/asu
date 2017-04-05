@@ -216,9 +216,9 @@ namespace SYMMETRY{
       }
       if (friedel){
         b = {{-b[0],-b[1],-b[2]}};
-        cout << b[0] << " " << b[1] << " " << b[2]  << " " << encode(b) << endl;
+        //cout << b[0] << " " << b[1] << " " << b[2]  << " " << encode(b) << endl;
         if (isred(b,a)){
-          cout << "is reduced" << endl;
+          //cout << "is reduced" << endl;
           //cout << encode(b) << " < " << encode(a) << endl;
           a[0]=b[0];
           a[1]=b[1];

@@ -308,7 +308,7 @@ uint64_t constexpr get_point_group(const size_t s){
   }
 }
 
-size_t constexpr pointgroup_to_laue(const size_t s){
+size_t constexpr point_group_to_laue(const size_t s){
   switch (s){
     case  1:
     case  2:
@@ -329,19 +329,21 @@ size_t constexpr pointgroup_to_laue(const size_t s){
     case 13:
     case 14:
     case 15:
-      return 15;
     case 16:
+      return 16;
     case 17:
-      return 17;
     case 18:
+      return 18;
     case 19:
+      return 23;
     case 20:
-      return 20;
     case 21:
+      return 24;
     case 22:
     case 23:
       return 23;
     case 24:
+      return 24;
     case 25:
     case 26:
     case 27:
@@ -352,11 +354,18 @@ size_t constexpr pointgroup_to_laue(const size_t s){
     case 31:
     case 32:
       return 32;
+    case 33:
+    case 34:
+      return 34;
+    case 35:
+    case 36:
+    case 37:
+      return 37;
   }
 }
 
 size_t constexpr get_laue_group(const size_t s){
-  return pointgroup_to_laue(get_point_group(s));
+  return point_group_to_laue(get_point_group(s));
 }
 
 // h<2^17, k<2^17, l<2^17 or it breaks...
