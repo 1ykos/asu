@@ -21,6 +21,8 @@ using wmath::universal_encode_uint64;
 using wmath::universal_decode_uint64;
 using wmath::zigzag_encode;
 using wmath::zigzag_decode;
+using wmath::log2;
+using wmath::clz;
 
 uint64_t constexpr get_point_group(const size_t s){
   switch (s){
@@ -357,13 +359,19 @@ size_t constexpr get_laue_group(const size_t s){
   return pointgroup_to_laue(get_point_group(s));
 }
 
-// 111
+// h<2^17, k<2^17, l<2^17 or it breaks...
+// waisting about 6 to 10 bits
 uint64_t constexpr encode(const uint32_t _h,
                           const uint32_t _k,
-                          const uint32_t _l){ 
-  uint64_t h = _h+1;
-  uint64_t k = _k+1;
-  uint64_t l = _l+1;
+                          const uint32_t _l){
+  /*uint64_t a=0,b=0,c=0;
+  const uint64_t hc = universal_encode_uint64(_h,a);
+  const uint64_t kc = universal_encode_uint64(_k,b);
+  const uint64_t lc = universal_encode_uint64(_l,c);
+  return ((uint64_t(1)<<63)^(hc>>1)^(kc>>(a+1))^(lc>>(a+b+1)))>>(64-a-b-c-1);*/ 
+  uint64_t h = _h;
+  uint64_t k = _k;
+  uint64_t l = _l;
   uint64_t reorder = 0;
   if (k<h){
     swap(h,k);
@@ -378,32 +386,35 @@ uint64_t constexpr encode(const uint32_t _h,
     reorder^= 4ull;
   }
   // encode
-  const uint64_t log2h = log2(h);
-  const uint64_t log2k = log2(k);
-  const uint64_t log2l = log2(l);
-  uint64_t r = 0;
+  const uint64_t digh = h<2?1:64-clz(h);
+  const uint64_t digk = k<2?1:64-clz(k);
+  const uint64_t digl = l<2?1:64-clz(l);
+  uint64_t r = 1ull;
   uint64_t a=0;
-  const uint64_t elog2h = universal_encode_uint64(log2h+1,a);
-  r^=(elog2h>>(64-a));
-  r<<=log2h;
-  r^=(h^(1ull<<log2h));
-  //r^=h;
-  a=0;
-  const uint64_t elog2k = universal_encode_uint64(log2k-log2h+1,a);
+  const uint64_t edigh = universal_encode_uint64(digh,a);
   r<<=a;
-  r^=(elog2k>>(64-a));
-  r<<=log2k;
-  r^=(k^(1ull<<log2k));
+  r^=(edigh>>(64-a));
+  r<<=(digh>1?digh-1:1);
+  r^=h;
+  if (digh>1) r^=1ull<<(digh-1);
   a=0;
-  const uint64_t elog2l = universal_encode_uint64(log2l-log2k+1,a);
+  const uint64_t edigk = universal_encode_uint64(digk-digh,a);
   r<<=a;
-  r^=(elog2l>>(64-a));
-  r<<=log2l;
-  r^=(l^(1ull<<log2l));
+  r^=(edigk>>(64-a));
+  r<<=(digk>1?digk-1:1);
+  r^=k;
+  if (digk>1) r^=1ull<<(digk-1);
+  a=0;
+  const uint64_t edigl = universal_encode_uint64(digl-digk,a);
+  r<<=a;
+  r^=(edigl>>(64-a));
+  r<<=(digl>1?digl-1:1);
+  r^=l;
+  if (digl>1) r^=1ull<<(digl-1);
   r<<=3;
   r^=reorder;
   // pack
-  return r;//reorder log2(h) h log2(k)-log2(h) k log2(l)-log2(k) l
+  return r;//reorder log2(h) h log2(k)-log2(h) k log2(l)-log2(k) l*/
 }
 
 constexpr void decode(const uint64_t x,
@@ -413,21 +424,39 @@ constexpr void decode(const uint64_t x,
   const uint64_t lz = __builtin_clzll(x);
   uint64_t a=0;
   uint64_t r = x;
-  r <<= lz;
-  const uint64_t log2h = universal_decode_uint64(r,a)-1;
+  r <<= lz+1;
+  const uint64_t digh = universal_decode_uint64(r,a);
   r <<= a;
-  h = ((r>>(64-log2h))|(1ull<<log2h))-1;
-  r <<= log2h;
+  if (digh==1){
+    h = r>>63;
+    r <<=1;
+  }else{
+    h = r>>(65-digh);
+    h|=1ull<<(digh-1);
+    r <<= (digh-1);
+  }
   a = 0;
-  const uint64_t log2k = log2h+universal_decode_uint64(r,a)-1;
+  const uint64_t digk = digh+universal_decode_uint64(r,a);
   r <<= a;
-  k = ((r>>(64-log2k))|(1ull<<log2k))-1;
-  r <<= log2k;
+  if (digk==1){
+    k = r>>63;
+    r <<=1;
+  }else{
+    k = r>>(65-digk);
+    k|=1ull<<(digk-1);
+    r <<= (digk-1);
+  }
   a = 0;
-  const uint64_t log2l = log2k+universal_decode_uint64(r,a)-1;
+  const uint64_t digl = digk+universal_decode_uint64(r,a);
   r <<= a;
-  l = ((r>>(64-log2l))|(1ull<<log2l))-1;
-  r <<=log2l;
+  if (digl==1){
+    l = r>>63;
+    r<<=1;
+  }else{
+    l = r>>(65-digl);
+    l|=1ull<<(digl-1);
+    r <<= (digl-1);
+  }
   if (r&(1ull<<63)){
     swap(h,k);
   }
