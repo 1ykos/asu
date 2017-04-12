@@ -370,7 +370,7 @@ size_t constexpr get_laue_group(const size_t s){
 
 // h<2^17, k<2^17, l<2^17 or it breaks...
 // waisting about 6 to 10 bits
-uint64_t constexpr encode(const uint32_t _h,
+uint64_t const inline encode(const uint32_t _h,
                           const uint32_t _k,
                           const uint32_t _l){
   /*uint64_t a=0,b=0,c=0;
@@ -426,7 +426,7 @@ uint64_t constexpr encode(const uint32_t _h,
   return r;//reorder log2(h) h log2(k)-log2(h) k log2(l)-log2(k) l*/
 }
 
-constexpr void decode(const uint64_t x,
+const inline void decode(const uint64_t x,
                       uint32_t& h,
                       uint32_t& k,
                       uint32_t& l){
@@ -478,54 +478,54 @@ constexpr void decode(const uint64_t x,
 }
 
 // 000
-uint64_t constexpr encode(const int32_t h,const int32_t k,const int32_t l){
+uint64_t const inline encode(const int32_t h,const int32_t k,const int32_t l){
   return encode(zigzag_encode(-h),zigzag_encode(-k),zigzag_encode(-l));
 }
 // 001
-uint64_t constexpr encode(const int32_t h,const int32_t k,const uint32_t l){
+uint64_t const inline encode(const int32_t h,const int32_t k,const uint32_t l){
   return encode(zigzag_encode(-h),zigzag_encode(-k),l);
 }
 // 010
-uint64_t constexpr encode(const int32_t h,const uint32_t k,const int32_t l){
+uint64_t const inline encode(const int32_t h,const uint32_t k,const int32_t l){
   return encode(zigzag_encode(-h),k,zigzag_encode(-l));
 }
 // 011
-uint64_t constexpr encode(const int32_t h,const uint32_t k,const uint32_t l){
+uint64_t const inline encode(const int32_t h,const uint32_t k,const uint32_t l){
   return encode(zigzag_encode(-h),k,l);
 }
 // 100
-uint64_t constexpr encode(const uint32_t h,const int32_t k,const int32_t l){
+uint64_t const inline encode(const uint32_t h,const int32_t k,const int32_t l){
   return encode(h,zigzag_encode(-k),zigzag_encode(-l));
 }
 // 101
-uint64_t constexpr encode(const uint32_t h,const int32_t k,const uint32_t l){
+uint64_t const inline encode(const uint32_t h,const int32_t k,const uint32_t l){
   return encode(h,zigzag_encode(-k),zigzag_encode(-l));
 }
 // 110
-uint64_t constexpr encode(const uint32_t h,const uint32_t k,const int32_t l){
+uint64_t const inline encode(const uint32_t h,const uint32_t k,const int32_t l){
   return encode(h,k,zigzag_encode(-l));
 }
 
 
-MillerIndex constexpr decode_sss(const uint64_t x){
+MillerIndex const inline decode_sss(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{-zigzag_decode(h),-zigzag_decode(k),-zigzag_decode(l)}};
 }
 
-MillerIndex constexpr decode_uss(const uint64_t x){
+MillerIndex const inline decode_uss(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{static_cast<int32_t>(h),-zigzag_decode(k),-zigzag_decode(l)}};
 }
 
-MillerIndex constexpr decode_sus(const uint64_t x){
+MillerIndex const inline decode_sus(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{-zigzag_decode(h),static_cast<int32_t>(k),-zigzag_decode(l)}};
 }
 
-MillerIndex constexpr decode_uus(const uint64_t x){
+MillerIndex const inline decode_uus(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -535,7 +535,7 @@ MillerIndex constexpr decode_uus(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_uds(const uint64_t x){
+MillerIndex const inline decode_uds(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -545,7 +545,7 @@ MillerIndex constexpr decode_uds(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_uas(const uint64_t x){
+MillerIndex const inline decode_uas(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -555,7 +555,7 @@ MillerIndex constexpr decode_uas(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_udu(const uint64_t x){
+MillerIndex const inline decode_udu(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -565,7 +565,7 @@ MillerIndex constexpr decode_udu(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_uud(const uint64_t x){
+MillerIndex const inline decode_uud(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -575,7 +575,7 @@ MillerIndex constexpr decode_uud(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_udd(const uint64_t x){
+MillerIndex const inline decode_udd(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -585,7 +585,7 @@ MillerIndex constexpr decode_udd(const uint64_t x){
   }};
 }
 
-MillerIndex constexpr decode_uuu(const uint64_t x){
+MillerIndex const inline decode_uuu(const uint64_t x){
   uint32_t h=0,k=0,l=0;
   decode(x,h,k,l);
   return {{
@@ -604,34 +604,34 @@ MillerIndex constexpr decode_uuu(const uint64_t x){
 //6. l small
 
 template<size_t s>
-constexpr void reduce(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce(int32_t& h,int32_t& k,int32_t& l){
   return; // default to do nothing ;)
 }
 //this is the old way and it persists as the most general form for s=1
 template<size_t s>
-uint64_t constexpr reduce_encode(const MillerIndex& hkl){
+uint64_t const inline reduce_encode(const MillerIndex& hkl){
   return encode(hkl[0],hkl[1],hkl[2]);
 }
 template<size_t s>
-MillerIndex constexpr decode(const uint64_t x){
+MillerIndex const inline decode(const uint64_t x){
   return decode_sss(x);
 }
 
 template<>
-constexpr void reduce<1>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<1>(int32_t& h,int32_t& k,int32_t& l){
   return;
 }
 template<>
-uint64_t constexpr reduce_encode<1>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<1>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<1>(h,k,l);
   return encode(h,k,l);
 }
 template<>
-MillerIndex constexpr decode<1>(const uint64_t x){return decode_sss(x);}
+MillerIndex const inline decode<1>(const uint64_t x){return decode_sss(x);}
 
 template<>
-constexpr void reduce<2>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<2>(int32_t& h,int32_t& k,int32_t& l){
   if(h<0){
     h=-h;
     k=-k;
@@ -647,16 +647,16 @@ constexpr void reduce<2>(int32_t& h,int32_t& k,int32_t& l){
   l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<2>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<2>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<2>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 }
 template<>
-MillerIndex constexpr decode<2>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<2>(const uint64_t x){return decode_uss(x);}
 
 template<>
-constexpr void reduce<3>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<3>(int32_t& h,int32_t& k,int32_t& l){
   if (h<0){
     h=-h;
     l=-l;
@@ -666,29 +666,29 @@ constexpr void reduce<3>(int32_t& h,int32_t& k,int32_t& l){
   l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<3>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<3>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<3>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 }
 template<>
-MillerIndex constexpr decode<3>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<3>(const uint64_t x){return decode_uss(x);}
 
 template<>
-constexpr void reduce<4>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<4>(int32_t& h,int32_t& k,int32_t& l){
   k=abs(k);
 }
 template<>
-uint64_t constexpr reduce_encode<4>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<4>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<4>(h,k,l);
   return encode(h,static_cast<uint32_t>(k),l);
 }
 template<>
-MillerIndex constexpr decode<4>(const uint64_t x){return decode_sus(x);}
+MillerIndex const inline decode<4>(const uint64_t x){return decode_sus(x);}
 
 template<>
-constexpr void reduce<5>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<5>(int32_t& h,int32_t& k,int32_t& l){
   k=abs(k);
   if (h<0){
     h=-h;
@@ -699,16 +699,16 @@ constexpr void reduce<5>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<5>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<5>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<5>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<5>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<5>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<6>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<6>(int32_t& h,int32_t& k,int32_t& l){
   // 110 011 101
   l=((h<0)!=(k<0))?-l:l;
   h=abs(h);
@@ -716,31 +716,31 @@ constexpr void reduce<6>(int32_t& h,int32_t& k,int32_t& l){
   if (h==0||k==0) l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<6>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<6>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<6>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<6>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<6>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<7>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<7>(int32_t& h,int32_t& k,int32_t& l){
   // 110 100 010
   h = abs(h);
   k = abs(k);
 }
 template<>
-uint64_t constexpr reduce_encode<7>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<7>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<7>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<7>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<7>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<8>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<8>(int32_t& h,int32_t& k,int32_t& l){
 //  + o o   + o o   + o o   - o o   - o o   - o o   - o o
 //  o + o   o - o   o - o   o + o   o + o   o - o   o - o
 //  o o -   o o +   o o -   o o +   o o -   o o +   o o -
@@ -750,7 +750,7 @@ constexpr void reduce<8>(int32_t& h,int32_t& k,int32_t& l){
   l = abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<8>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<8>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<8>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -758,10 +758,10 @@ uint64_t constexpr reduce_encode<8>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<8>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<8>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<9>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<9>(int32_t& h,int32_t& k,int32_t& l){
 //  o - o   - o o   o + o
 //  + o o   o - o   - o o
 //  o o +   o o +   o o +
@@ -774,16 +774,16 @@ constexpr void reduce<9>(int32_t& h,int32_t& k,int32_t& l){
   if (k==0) swap(h,k);
 }
 template<>
-uint64_t constexpr reduce_encode<9>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<9>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<9>(h,k,l); // h always positive, abs(h)>abs(k) -> h+k>=0
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 }
 template<>
-MillerIndex constexpr decode<9>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<9>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<10>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<10>(int32_t& h,int32_t& k,int32_t& l){
 //  o + o   - o o   o - o
 //  - o o   o - o   + o o
 //  o o -   o o +   o o -
@@ -805,16 +805,16 @@ constexpr void reduce<10>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<10>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<10>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<10>(h,k,l); // h always positive, abs(h)>abs(k) -> h+k>=0
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<10>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<10>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<11>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<11>(int32_t& h,int32_t& k,int32_t& l){
 //  o - o   - o o   o + o   - o o   o + o   + o o   o - o
 //  + o o   o - o   - o o   o - o   - o o   o + o   + o o
 //  o o +   o o +   o o +   o o -   o o -   o o -   o o -
@@ -828,7 +828,7 @@ constexpr void reduce<11>(int32_t& h,int32_t& k,int32_t& l){
   if (k==0) swap(h,k);
 }
 template<>
-uint64_t constexpr reduce_encode<11>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<11>(const MillerIndex& hkl){
   int32_t h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<11>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -836,10 +836,10 @@ uint64_t constexpr reduce_encode<11>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<11>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<11>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<12>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<12>(int32_t& h,int32_t& k,int32_t& l){
 //  - o o   + o o   - o o   o + o   o + o   o - o   o - o
 //  o - o   o - o   o + o   - o o   + o o   + o o   - o o
 //  o o +   o o -   o o -   o o +   o o -   o o +   o o - 
@@ -862,7 +862,7 @@ constexpr void reduce<12>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<12>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<12>(const MillerIndex& hkl){
 //  - o o   + o o   - o o   o + o   o + o   o - o   o - o
 //  o - o   o - o   o + o   - o o   + o o   + o o   - o o
 //  o o +   o o -   o o -   o o +   o o -   o o +   o o -
@@ -874,10 +874,10 @@ uint64_t constexpr reduce_encode<12>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<12>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<12>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<13>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<13>(int32_t& h,int32_t& k,int32_t& l){
 //   o - o   - o o   o + o   - o o   o - o   + o o   o + o
 //   + o o   o - o   - o o   o + o   - o o   o - o   + o o
 //   o o +   o o +   o o +   o o +   o o +   o o +   o o +
@@ -889,16 +889,16 @@ constexpr void reduce<13>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<13>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<13>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<13>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
 };
 template<>
-MillerIndex constexpr decode<13>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<13>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<14>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<14>(int32_t& h,int32_t& k,int32_t& l){
 //   o + o    - o o    o - o    + o o    o - o    - o o    o + o
 //   - o o    o - o    + o o    o - o    - o o    o + o    + o o
 //   o o -    o o +    o o -    o o -    o o +    o o -    o o +
@@ -912,16 +912,16 @@ constexpr void reduce<14>(int32_t& h,int32_t& k,int32_t& l){
   if (h==0) l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<14>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<14>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<14>(h,k,l);//k>=h
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
 }
 template<>
-MillerIndex constexpr decode<14>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<14>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<15>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<15>(int32_t& h,int32_t& k,int32_t& l){
 // ̅4m2 is an alternative representation of ̅42m (14)
 // + o o   o + o   - o o   o - o   - o o   o + o   + o o   o - o
 // o + o   - o o   o - o   + o o   o + o   + o o   o - o   - o o
@@ -938,7 +938,7 @@ constexpr void reduce<15>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<15>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<15>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<15>(h,k,l);//k>=h
   return encode(static_cast<uint32_t>(h),
@@ -946,7 +946,7 @@ uint64_t constexpr reduce_encode<15>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 }
 template<>
-MillerIndex constexpr decode<15>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<15>(const uint64_t x){return decode_uuu(x);}
 
 //  121 -> 14
 //   + o o   o + o   - o o   o - o   + o o   o - o   - o o   o + o
@@ -954,7 +954,7 @@ MillerIndex constexpr decode<15>(const uint64_t x){return decode_uuu(x);}
 //   o o +   o o -   o o +   o o -   o o -   o o +   o o -   o o +
 
 template<>
-constexpr void reduce<16>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<16>(int32_t& h,int32_t& k,int32_t& l){
 //  + o o   o - o   - o o   o + o   + o o   o + o   - o o   o - o 
 //  o + o   + o o   o - o   - o o   o - o   + o o   o + o   - o o 
 //  o o +   o o +   o o +   o o +   o o -   o o -   o o -   o o -
@@ -968,7 +968,7 @@ constexpr void reduce<16>(int32_t& h,int32_t& k,int32_t& l){
   if (h>k) swap(h,k);
 }
 template<>
-uint64_t constexpr reduce_encode<16>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<16>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<16>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -976,10 +976,10 @@ uint64_t constexpr reduce_encode<16>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 }
 template<>
-MillerIndex constexpr decode<16>(const uint64_t x){return decode_udu(x);}
+MillerIndex const inline decode<16>(const uint64_t x){return decode_udu(x);}
 
 template<>
-constexpr void reduce<17>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<17>(int32_t& h,int32_t& k,int32_t& l){
 //   o - o   - + o
 //   + - o   - o o
 //   o o +   o o +
@@ -1012,16 +1012,16 @@ constexpr void reduce<17>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<17>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<17>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<17>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<17>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<17>(const uint64_t x){return decode_uss(x);}
 
 template<>
-constexpr void reduce<18>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<18>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   - o o   o + o   + - o
 //   o + o   + - o   - o o   o - o   - + o   + o o
 //   o o +   o o +   o o +   o o -   o o -   o o -
@@ -1085,16 +1085,16 @@ constexpr void reduce<18>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<18>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<18>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<18>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<18>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<18>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<19>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<19>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   o - o   + o o   - + o
 //   o + o   + - o   - o o   - o o   + - o   o + o
 //   o o +   o o +   o o +   o o -   o o -   o o -
@@ -1141,17 +1141,17 @@ constexpr void reduce<19>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<19>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<19>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<19>(h,k,l);
   return encode(static_cast<uint32_t>(h),
                 static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<19>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<19>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<20>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<20>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   o + o   - o o   + - o
 //   o + o   + - o   - o o   + o o   - + o   o - o
 //   o o +   o o +   o o +   o o -   o o -   o o - 
@@ -1197,16 +1197,16 @@ constexpr void reduce<20>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<20>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<20>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<20>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<20>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<20>(const uint64_t x){return decode_uss(x);}
 
 template<>
-constexpr void reduce<21>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<21>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   o - o   + o o   - + o
 //   o + o   + - o   - o o   - o o   + - o   o + o
 //   o o +   o o +   o o +   o o +   o o +   o o + 
@@ -1239,16 +1239,16 @@ constexpr void reduce<21>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<21>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<21>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<21>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<21>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<21>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<22>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<22>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   o + o   - o o   + - o
 //   o + o   + - o   - o o   + o o   - + o   o - o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1278,13 +1278,13 @@ constexpr void reduce<22>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<22>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<22>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<22>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<22>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<22>(const uint64_t x){return decode_uss(x);}
 // 158
 //   + o o   o - o   - + o   o - o   + o o   - + o
 //   o + o   + - o   - o o   - o o   + - o   o + o
@@ -1292,7 +1292,7 @@ MillerIndex constexpr decode<22>(const uint64_t x){return decode_uss(x);}
 
 
 template<>
-constexpr void reduce<23>(int32_t& h,int32_t& k,int32_t& l){ 
+const inline void reduce<23>(int32_t& h,int32_t& k,int32_t& l){ 
 //   + o o   o - o   - + o   o - o   + o o   - + o
 //   o + o   + - o   - o o   - o o   + - o   o + o
 //   o o +   o o +   o o +   o o -   o o -   o o -
@@ -1304,7 +1304,7 @@ constexpr void reduce<23>(int32_t& h,int32_t& k,int32_t& l){
   if (h>k) swap(h,k);
 }
 template<>
-uint64_t constexpr reduce_encode<23>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<23>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<23>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1312,10 +1312,10 @@ uint64_t constexpr reduce_encode<23>(const MillerIndex& hkl){
                 l);
 };
 template<>
-MillerIndex constexpr decode<23>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<23>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<24>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<24>(int32_t& h,int32_t& k,int32_t& l){
 
 //   + o o   o - o   - + o   - + o   + o o   o - o
 //   o + o   + - o   - o o   o + o   + - o   - o o
@@ -1339,7 +1339,7 @@ constexpr void reduce<24>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<24>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<24>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<24>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1347,10 +1347,10 @@ uint64_t constexpr reduce_encode<24>(const MillerIndex& hkl){
       static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<24>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<24>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<25>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<25>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + - o   o - o   - o o   - + o   o + o
 //   o + o   + o o   + - o   o - o   - o o   - + o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1384,16 +1384,16 @@ constexpr void reduce<25>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<25>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<25>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<25>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k),l);
 };
 template<>
-MillerIndex constexpr decode<25>(const uint64_t x){return decode_uus(x);}
+MillerIndex const inline decode<25>(const uint64_t x){return decode_uus(x);}
 
 template<>
-constexpr void reduce<26>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<26>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   - + o   o - o   + o o   - + o   o - o
 //   o + o   - o o   + - o   o + o   - o o   + - o
 //   o o +   o o -   o o +   o o -   o o +   o o -
@@ -1415,17 +1415,17 @@ constexpr void reduce<26>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<26>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<26>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<26>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<26>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<26>(const uint64_t x){return decode_uss(x);}
 
 
 template<>
-constexpr void reduce<27>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<27>(int32_t& h,int32_t& k,int32_t& l){
 //    + o o    + - o    o - o    - o o    - + o    o + o
 //    o + o    + o o    + - o    o - o    - o o    - + o
 //    o o +    o o +    o o +    o o +    o o +    o o +
@@ -1442,7 +1442,7 @@ constexpr void reduce<27>(int32_t& h,int32_t& k,int32_t& l){
   reduce<25>(h,k,l);
 }
 template<>
-uint64_t constexpr reduce_encode<27>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<27>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<27>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1450,10 +1450,10 @@ uint64_t constexpr reduce_encode<27>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<27>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<27>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<28>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<28>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + - o   o - o   - o o   - + o   o + o
 //   o + o   + o o   + - o   o - o   - o o   - + o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1474,7 +1474,7 @@ constexpr void reduce<28>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<28>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<28>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<28>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1482,10 +1482,10 @@ uint64_t constexpr reduce_encode<28>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<28>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<28>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<29>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<29>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + - o   o - o   - o o   - + o   o + o
 //   o + o   + o o   + - o   o - o   - o o   - + o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1519,16 +1519,16 @@ constexpr void reduce<29>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<29>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<29>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<29>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
 };
 template<>
-MillerIndex constexpr decode<29>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<29>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<30>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<30>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   - + o   o - o   + o o
 //   o + o   + - o   - o o   o + o   - o o   + - o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1544,7 +1544,7 @@ constexpr void reduce<30>(int32_t& h,int32_t& k,int32_t& l){
   reduce<21>(h,k,l);
 }
 template<>
-uint64_t constexpr reduce_encode<30>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<30>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<30>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1552,10 +1552,10 @@ uint64_t constexpr reduce_encode<30>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<30>(const uint64_t x){return decode_uuu(x);}
+MillerIndex const inline decode<30>(const uint64_t x){return decode_uuu(x);}
 
 template<>
-constexpr void reduce<31>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<31>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - + o   o + o   + - o   - o o
 //   o + o   + - o   - o o   + o o   o - o   - + o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1570,16 +1570,16 @@ constexpr void reduce<31>(int32_t& h,int32_t& k,int32_t& l){
   reduce<22>(h,k,l);
 }
 template<>
-uint64_t constexpr reduce_encode<31>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<31>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<31>(h,k,l);
   return encode(static_cast<uint32_t>(h),k,l);
 };
 template<>
-MillerIndex constexpr decode<31>(const uint64_t x){return decode_uss(x);}
+MillerIndex const inline decode<31>(const uint64_t x){return decode_uss(x);}
 
 template<>
-constexpr void reduce<32>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<32>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + - o   o - o   o + o   - + o   + o o
 //   o + o   + o o   + - o   + o o   o + o   + - o
 //   o o +   o o +   o o +   o o +   o o +   o o +
@@ -1599,7 +1599,7 @@ constexpr void reduce<32>(int32_t& h,int32_t& k,int32_t& l){
   reduce<29>(h,k,l);
 }
 template<>
-uint64_t constexpr reduce_encode<32>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<32>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<32>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1607,10 +1607,10 @@ uint64_t constexpr reduce_encode<32>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<32>(const uint64_t x){return decode_udu(x);}
+MillerIndex const inline decode<32>(const uint64_t x){return decode_udu(x);}
 
 template<>
-constexpr void reduce<33>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<33>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   - o o   + o o   - o o
 //   o + o   o - o   o - o   o + o
 //   o o +   o o +   o o -   o o -
@@ -1648,16 +1648,16 @@ constexpr void reduce<33>(int32_t& h,int32_t& k,int32_t& l){
   if (h==0||k==0) l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<33>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<33>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<33>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
 };
 template<>
-MillerIndex constexpr decode<33>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<33>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<34>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<34>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + o o   + o o   + o o   - o o   - o o   - o o   - o o
 //   o + o   o + o   o - o   o - o   o + o   o + o   o - o   o - o
 //   o o +   o o -   o o +   o o -   o o +   o o -   o o +   o o -
@@ -1683,7 +1683,7 @@ constexpr void reduce<34>(int32_t& h,int32_t& k,int32_t& l){
   }
 }
 template<>
-uint64_t constexpr reduce_encode<34>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<34>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<34>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1691,10 +1691,10 @@ uint64_t constexpr reduce_encode<34>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l));
 };
 template<>
-MillerIndex constexpr decode<34>(const uint64_t x){return decode_udu(x);}
+MillerIndex const inline decode<34>(const uint64_t x){return decode_udu(x);}
 
 template<>
-constexpr void reduce<35>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<35>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + o o   - o o   - o o
 //   o + o   o - o   o + o   o - o
 //   o o +   o o -   o o -   o o +
@@ -1751,7 +1751,7 @@ constexpr void reduce<35>(int32_t& h,int32_t& k,int32_t& l){
 // now the order that is left must be the best
 }
 template<>
-uint64_t constexpr reduce_encode<35>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<35>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<35>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1759,10 +1759,10 @@ uint64_t constexpr reduce_encode<35>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l-h));
 };
 template<>
-MillerIndex constexpr decode<35>(const uint64_t x){return decode_uud(x);}
+MillerIndex const inline decode<35>(const uint64_t x){return decode_uud(x);}
 
 template<>
-constexpr void reduce<36>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<36>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   + o o   - o o   - o o
 //   o + o   o - o   o + o   o - o
 //   o o +   o o -   o o -   o o +
@@ -1799,16 +1799,16 @@ constexpr void reduce<36>(int32_t& h,int32_t& k,int32_t& l){
   if (h==0) l=abs(l);
 }
 template<>
-uint64_t constexpr reduce_encode<36>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<36>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<36>(h,k,l);
   return encode(static_cast<uint32_t>(h),static_cast<uint32_t>(k-h),l);
 };
 template<>
-MillerIndex constexpr decode<36>(const uint64_t x){return decode_uds(x);}
+MillerIndex const inline decode<36>(const uint64_t x){return decode_uds(x);}
 
 template<>
-constexpr void reduce<37>(int32_t& h,int32_t& k,int32_t& l){
+const inline void reduce<37>(int32_t& h,int32_t& k,int32_t& l){
 //   + o o   o - o   - o o   o + o   + o o   o + o   - o o   o - o
 //   o + o   + o o   o - o   - o o   o - o   + o o   o + o   - o o
 //   o o +   o o +   o o +   o o +   o o -   o o -   o o -   o o -
@@ -1840,7 +1840,7 @@ constexpr void reduce<37>(int32_t& h,int32_t& k,int32_t& l){
   if (k<h) swap(h,k);
 }
 template<>
-uint64_t constexpr reduce_encode<37>(const MillerIndex& hkl){
+uint64_t const inline reduce_encode<37>(const MillerIndex& hkl){
   int h=hkl[0],k=hkl[1],l=hkl[2];
   reduce<37>(h,k,l);
   return encode(static_cast<uint32_t>(h),
@@ -1848,9 +1848,9 @@ uint64_t constexpr reduce_encode<37>(const MillerIndex& hkl){
                 static_cast<uint32_t>(l-k));
 };
 template<>
-MillerIndex constexpr decode<37>(const uint64_t x){return decode_udd(x);}
+MillerIndex const inline decode<37>(const uint64_t x){return decode_udd(x);}
 
-size_t constexpr reduce_encode(const MillerIndex& hkl,const size_t s){
+size_t const inline reduce_encode(const MillerIndex& hkl,const size_t s){
   switch (s){
     case 1:
       return reduce_encode< 1>(hkl);
@@ -1930,7 +1930,7 @@ size_t constexpr reduce_encode(const MillerIndex& hkl,const size_t s){
       return reduce_encode<1>(hkl);
   }
 }
-constexpr void reduce(int32_t& h,int32_t& k,int32_t& l,const size_t s){
+const inline void reduce(int32_t& h,int32_t& k,int32_t& l,const size_t s){
   switch (s){
     case 1:
       return reduce< 1>(h,k,l);
@@ -1948,7 +1948,7 @@ constexpr void reduce(int32_t& h,int32_t& k,int32_t& l,const size_t s){
       return reduce< 7>(h,k,l);
     case 8:
       return reduce< 8>(h,k,l);
-    case 9:
+     case 9:
       return reduce< 9>(h,k,l);
     case 10:
       return reduce<10>(h,k,l);
@@ -2010,7 +2010,7 @@ constexpr void reduce(int32_t& h,int32_t& k,int32_t& l,const size_t s){
       return reduce<1>(h,k,l);
   }
 }
-constexpr void reduce(MillerIndex& hkl,const size_t s){
+const inline void reduce(MillerIndex& hkl,const size_t s){
   switch (s){
     case 1:
       return reduce< 1>(hkl[0],hkl[1],hkl[2]);
@@ -2090,7 +2090,7 @@ constexpr void reduce(MillerIndex& hkl,const size_t s){
       return reduce<1>(hkl[0],hkl[1],hkl[2]);
   }
 }
-MillerIndex constexpr decode(const uint64_t x,const size_t s){
+MillerIndex const inline decode(const uint64_t x,const size_t s){
   switch (s){
     case 1:
       return decode< 1>(x);

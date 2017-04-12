@@ -241,12 +241,12 @@ namespace SYMMETRY{
     Vector3D G = r*a;
     return 1.0/sqrt(norm_squared(G));
   }
-
+/*deprecated
   const inline double res(const ReciprocalCell &r,
                           const size_t x){
     return res(r,decode(x));
   }
-
+*/
   /* old ewald offset in strange units
   const void inline res_ewald(const MillerIndex& a,
                               const ReciprocalCell& r,
